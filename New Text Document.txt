@@ -1,1 +1,52 @@
-1114,75,298
+import discord
+from discord.ext import commands
+from markov import Markov
+from music import Music
+import logging
+logging.basicConfig(level=logging.INFO)
+
+token='MTAyNzIxNjA1NTM5NzAwNzQwMA.Gm6fF5.ijECcz95d7R0T3G9-jQyoP0l4IqkX236i_gj7Y'
+
+
+class Misc(commands.Cog):
+    @commands.command(description="test command")
+    async def ping(self, ctx):
+        await ctx.reply('pong')
+
+    @commands.command(description="goblin")
+    async def goblin(self, ctx, length=20):
+        if length > 285:
+            length=285
+        await ctx.reply("goblin "*length)
+
+
+
+class SujBot(commands.Bot):
+    def __init__(self):
+        intents = discord.Intents.default()
+        intents.message_content = True
+        super().__init__(intents=intents, command_prefix='>')
+
+    async def on_ready(self):
+        logging.info("-"*70)
+        logging.info("Initiated suj bot as {} with id {}".format(self.user, self.user.id))
+        logging.info("-"*70)
+
+
+    async def add_cogs(self):
+        cogs = [Misc(), Markov(self), Music(self)]
+        for cog in cogs:
+            await self.add_cog(cog)
+
+    async def setup_hook(self):
+        await self.add_cogs()
+
+
+
+def main():
+    bot = SujBot()
+    bot.setup_hook()
+    bot.run(token)
+
+if __name__ == "__main__":
+    main()
